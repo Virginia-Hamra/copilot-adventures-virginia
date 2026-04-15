@@ -20,7 +20,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Detect which language directories changed so downstream jobs can skip
+  # when their source files are unmodified — avoids running C#/JS/Python
+  # build jobs unnecessarily when only one language was touched.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      csharp: ${{ steps.filter.outputs.csharp }}
+      javascript: ${{ steps.filter.outputs.javascript }}
+      python: ${{ steps.filter.outputs.python }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            csharp:
+              - 'Solutions/CSharp/**'
+              - '.github/workflows/ci.yml'
+            javascript:
+              - 'Solutions/JavaScript/**'
+              - '.github/workflows/ci.yml'
+            python:
+              - 'Solutions/Python/**'
+              - '.github/workflows/ci.yml'
+
   build-csharp:
+    needs: changes
+    # Skip this job when only JS or Python files changed
+    if: ${{ needs.changes.outputs.csharp == 'true' }}
     runs-on: ubuntu-latest
     # Prevent runaway jobs from consuming excess minutes
     timeout-minutes: 10
@@ -30,12 +60,20 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          # Match the net9.0 TargetFramework declared in CopilotAdventures.csproj
+          dotnet-version: '9.0.x'
+          # Cache the global NuGet package store; speeds up runs when dependencies
+          # are present and is a no-op cost when there are none.
+          cache: true
+          cache-dependency-path: Solutions/CSharp/**/*.csproj
       
       - name: Build C# Solutions
         run: dotnet build Solutions/CSharp/CopilotAdventures.sln
   
   build-javascript:
+    needs: changes
+    # Skip this job when only C# or Python files changed
+    if: ${{ needs.changes.outputs.javascript == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -52,6 +90,9 @@ jobs:
           echo "JavaScript syntax validation passed"
   
   build-python:
+    needs: changes
+    # Skip this job when only C# or JS files changed
+    if: ${{ needs.changes.outputs.python == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
