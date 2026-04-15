@@ -3,12 +3,21 @@ name: CI
 on:
   push:
     branches: [ main ]
+    # Skip CI for documentation and image-only changes to avoid unnecessary runner usage
+    paths:
+      - 'Solutions/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'Solutions/**'
+      - '.github/workflows/ci.yml'
 
 jobs:
   build-csharp:
     runs-on: ubuntu-latest
+    # Prevent runaway jobs from consuming excess minutes
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       
@@ -16,12 +25,16 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+          # Cache NuGet packages to avoid re-downloading on every run (~30-60s savings)
+          cache: true
+          cache-dependency-path: Solutions/CSharp/**/*.csproj
       
       - name: Build C# Solutions
         run: dotnet build Solutions/CSharp/CopilotAdventures.sln
   
   build-javascript:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       
@@ -37,6 +50,7 @@ jobs:
   
   build-python:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       
