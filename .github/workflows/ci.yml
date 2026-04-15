@@ -25,9 +25,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-          # Cache NuGet packages to avoid re-downloading on every run (~30-60s savings)
-          cache: true
-          cache-dependency-path: Solutions/CSharp/**/*.csproj
       
       - name: Build C# Solutions
         run: dotnet build Solutions/CSharp/CopilotAdventures.sln
