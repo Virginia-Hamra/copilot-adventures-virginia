@@ -30,7 +30,8 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          # Explicitly request the SDK version matching the project's TargetFramework (net9.0)
+          dotnet-version: '9.0.x'
       
       - name: Build C# Solutions
         run: dotnet build Solutions/CSharp/CopilotAdventures.sln
