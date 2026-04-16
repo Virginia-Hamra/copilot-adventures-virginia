@@ -4,6 +4,9 @@ on:
   label_command:
     name: ci-doctor
     events: [pull_request]
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
