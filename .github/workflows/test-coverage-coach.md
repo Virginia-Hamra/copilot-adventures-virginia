@@ -2,7 +2,8 @@
 description: Daily test coverage improvement workflow that adds focused unit tests for under-tested solution files.
 
 on:
-  schedule: daily
+  schedule:
+    - cron: "0 9 * * *"
   workflow_dispatch:
 
 network:
