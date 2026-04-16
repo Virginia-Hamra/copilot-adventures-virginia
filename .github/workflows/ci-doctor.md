@@ -4,6 +4,7 @@ on:
   label_command:
     name: ci-doctor
     events: [pull_request]
+  workflow_dispatch:
 
 permissions:
   actions: read         # To query workflow runs, jobs, and logs
