@@ -58,7 +58,7 @@ Each day, improve test coverage in a small, safe, reviewable batch by adding tes
 
 ## Repository Test Conventions
 
-- **C#**: tests are typically in `Solutions/CSharp/*Test*.cs` with custom assertion/test-runner style.
+- **C#**: tests are typically in `Solutions/CSharp/**/*Test*.cs` with custom assertion/test-runner style.
 - **JavaScript**: tests are typically `*.test.js`, often near the related adventure solution.
 - **Python**: tests typically use `test_*.py` naming.
 
@@ -87,7 +87,7 @@ Preserve local naming, formatting, and assertion style used near the files you m
 Run applicable validations after adding tests:
 
 - `dotnet build Solutions/CSharp/CopilotAdventures.sln`
-- `dotnet run --project Solutions/CSharp/CopilotAdventures.csproj mythos-test`
+- `dotnet run --project Solutions/CSharp/CopilotAdventures.csproj mythos-test` (repository baseline C# test runner check)
 - `for f in Solutions/JavaScript/*.js; do node --check "$f"; done`
 - `node Solutions/JavaScript/The-Gridlock-Arena-of-Mythos/The-Gridlock-Arena-of-Mythos.test.js`
 - `python -m py_compile Solutions/Python/*.py`
