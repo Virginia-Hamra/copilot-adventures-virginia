@@ -49,7 +49,7 @@
 name: "CI Optimization Coach"
 "on":
   schedule:
-  - cron: "30 20 * * *"
+  - cron: "27 19 * * *"
     # Friendly format: daily (scattered)
   workflow_dispatch:
     inputs:
