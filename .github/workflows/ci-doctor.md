@@ -4,10 +4,7 @@ on:
   label_command:
     name: ci-doctor
     events: [pull_request]
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    conclusions: [failure]
+  workflow_dispatch:
 
 permissions:
   actions: read         # To query workflow runs, jobs, and logs
