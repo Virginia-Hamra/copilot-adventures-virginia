@@ -47,7 +47,7 @@ timeout-minutes: 20
 
 steps:
   - name: Download CI failure logs and artifacts
-    if: github.event_name == 'workflow_run'
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       RUN_ID: ${{ github.event.workflow_run.id }}
