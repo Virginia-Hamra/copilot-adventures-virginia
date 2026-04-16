@@ -2,8 +2,7 @@
 description: Daily test coverage improvement workflow that adds focused unit tests for under-tested solution files.
 
 on:
-  schedule:
-    - cron: daily
+  schedule: daily
   workflow_dispatch:
 
 network:
@@ -58,7 +57,7 @@ Each day, improve test coverage in a small, safe, reviewable batch by adding tes
 
 ## Repository Test Conventions
 
-- **C#**: tests are typically in `Solutions/CSharp/*Tests.cs` with custom assertion/test-runner style.
+- **C#**: tests are typically in `Solutions/CSharp/*Test*.cs` with custom assertion/test-runner style.
 - **JavaScript**: tests are typically `*.test.js`, often near the related adventure solution.
 - **Python**: tests typically use `test_*.py` naming.
 
