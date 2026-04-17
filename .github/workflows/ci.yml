@@ -32,9 +32,16 @@ jobs:
         with:
           # Explicitly request the SDK version matching the project's TargetFramework (net9.0)
           dotnet-version: '9.0.x'
+          # Cache NuGet packages to avoid re-downloading on every run
+          cache: true
+          cache-dependency-path: Solutions/CSharp/**/*.csproj
       
       - name: Build C# Solutions
         run: dotnet build Solutions/CSharp/CopilotAdventures.sln
+
+      - name: Run C# Tests
+        # Runs the embedded Gridlock Arena test suite via the console app's 'mythos-test' entry point
+        run: dotnet run --project Solutions/CSharp/CopilotAdventures.sln -- mythos-test
   
   build-javascript:
     runs-on: ubuntu-latest
@@ -46,11 +53,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          # Cache npm dependencies for the Gridlock Arena test package
+          cache: 'npm'
+          cache-dependency-path: Solutions/JavaScript/The-Gridlock-Arena-of-Mythos/package.json
       
       - name: Validate JavaScript Files
         run: |
           for f in Solutions/JavaScript/*.js; do node --check "$f"; done
           echo "JavaScript syntax validation passed"
+
+      - name: Run JavaScript Tests
+        # Run the Gridlock Arena test suite which has its own package.json and test runner
+        run: |
+          cd Solutions/JavaScript/The-Gridlock-Arena-of-Mythos
+          npm ci
+          npm test
   
   build-python:
     runs-on: ubuntu-latest
@@ -67,3 +84,7 @@ jobs:
         run: |
           python -m py_compile Solutions/Python/*.py
           echo "Python syntax validation passed"
+
+      - name: Run Python Tests
+        # Run the Gridlock Arena test suite; exits with non-zero on failure
+        run: python Solutions/Python/test_gridlock_arena.py
