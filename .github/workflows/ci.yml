@@ -48,8 +48,9 @@ jobs:
           node-version: '20'
       
       - name: Validate JavaScript Files
+        # Use find so subdirectory solutions (e.g. The-Gridlock-Arena-of-Mythos/) are also checked
         run: |
-          for f in Solutions/JavaScript/*.js; do node --check "$f"; done
+          find Solutions/JavaScript -name "*.js" -print0 | xargs -0 -I{} node --check {}
           echo "JavaScript syntax validation passed"
   
   build-python:
