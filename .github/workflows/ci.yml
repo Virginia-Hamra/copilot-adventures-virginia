@@ -20,7 +20,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Detect which language directories changed so downstream jobs only run
+  # when their own files are modified, saving runner minutes on single-language commits.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      csharp:     ${{ steps.filter.outputs.csharp }}
+      javascript: ${{ steps.filter.outputs.javascript }}
+      python:     ${{ steps.filter.outputs.python }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            csharp:
+              - 'Solutions/CSharp/**'
+              - '.github/workflows/ci.yml'
+            javascript:
+              - 'Solutions/JavaScript/**'
+              - '.github/workflows/ci.yml'
+            python:
+              - 'Solutions/Python/**'
+              - '.github/workflows/ci.yml'
+
   build-csharp:
+    needs: changes
+    # Only rebuild when C# source or this workflow file changed
+    if: needs.changes.outputs.csharp == 'true'
     runs-on: ubuntu-latest
     # Prevent runaway jobs from consuming excess minutes
     timeout-minutes: 10
@@ -37,6 +65,9 @@ jobs:
         run: dotnet build Solutions/CSharp/CopilotAdventures.sln
   
   build-javascript:
+    needs: changes
+    # Only validate when JavaScript source or this workflow file changed
+    if: needs.changes.outputs.javascript == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -53,6 +84,9 @@ jobs:
           echo "JavaScript syntax validation passed"
   
   build-python:
+    needs: changes
+    # Only validate when Python source or this workflow file changed
+    if: needs.changes.outputs.python == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
