@@ -26,6 +26,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Fetch only the C# source directory; Images/ (~32 MB) is not needed
+          sparse-checkout: Solutions/CSharp
       
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -41,6 +44,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Only the JS solution files are validated; skip Images/ (~32 MB)
+          sparse-checkout: Solutions/JavaScript
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,6 +63,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Only the Python solution files are validated; skip Images/ (~32 MB)
+          sparse-checkout: Solutions/Python
       
       - name: Setup Python
         uses: actions/setup-python@v5
