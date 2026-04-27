@@ -32,6 +32,9 @@ jobs:
         with:
           # Explicitly request the SDK version matching the project's TargetFramework (net9.0)
           dotnet-version: '9.0.x'
+          # Cache NuGet packages to avoid re-downloading on every run
+          cache: true
+          cache-dependency-path: Solutions/CSharp/**/*.csproj
       
       - name: Build C# Solutions
         run: dotnet build Solutions/CSharp/CopilotAdventures.sln
@@ -49,7 +52,8 @@ jobs:
       
       - name: Validate JavaScript Files
         run: |
-          for f in Solutions/JavaScript/*.js; do node --check "$f"; done
+          # Use find to cover all subdirectories, not just the top level
+          find Solutions/JavaScript -name "*.js" -print0 | xargs -0 -I{} node --check "{}"
           echo "JavaScript syntax validation passed"
   
   build-python:
