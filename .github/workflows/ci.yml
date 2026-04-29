@@ -49,7 +49,8 @@ jobs:
       
       - name: Validate JavaScript Files
         run: |
-          for f in Solutions/JavaScript/*.js; do node --check "$f"; done
+          # Use find to recursively validate all .js files, including those in subdirectories
+          find Solutions/JavaScript -name "*.js" -exec node --check {} \;
           echo "JavaScript syntax validation passed"
   
   build-python:
